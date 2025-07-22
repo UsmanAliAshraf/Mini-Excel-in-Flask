@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Excel</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="app-header" tabindex="0" aria-label="Mini Excel Home">Welcome to Mini Excel</div>
+  <header class="ribbon">
+    <div class="ribbon-left">
+      <button class="ribbon-btn active">Formulas</button>
+      <button class="ribbon-btn">Functions</button>
+      <button class="ribbon-btn">Help</button>
+    </div>
+    <div class="ribbon-right">
+      <input type="text" class="search-bar" placeholder="Search...">
+      <div class="ribbon-font-group">
+        <button class="ribbon-btn font-btn" id="font-decrease" aria-label="Decrease font size">A-</button>
+        <button class="ribbon-btn font-btn" id="font-increase" aria-label="Increase font size">A+</button>
+      </div>
+      <div class="ribbon-style-group">
+        <button class="ribbon-btn style-btn" id="bold-btn" aria-label="Bold"><b>B</b></button>
+        <button class="ribbon-btn style-btn" id="italic-btn" aria-label="Italic"><i>I</i></button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div class="spreadsheet-container">
+      <table class="spreadsheet" id="spreadsheet">
+        <thead>
+          <tr>
+            <th class="corner"></th>
+            <!-- Column headers A-T -->
+            <!-- Will be filled by JS -->
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be filled by JS -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html> 
