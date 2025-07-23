@@ -10,8 +10,8 @@
   <div class="app-header" tabindex="0" aria-label="Mini Excel Home">Welcome to Mini Excel</div>
   <header class="ribbon">
     <div class="ribbon-left">
-      <button class="ribbon-btn active">Formulas</button>
-      <button class="ribbon-btn">Functions</button>
+      <button class="ribbon-btn" id="formulas-btn">Formulas</button>
+      <button class="ribbon-btn" id="functions-btn">Functions</button>
       <button class="ribbon-btn">Help</button>
     </div>
     <div class="ribbon-right">
@@ -26,6 +26,26 @@
       </div>
     </div>
   </header>
+
+  <!-- Dropdowns -->
+  <div class="dropdown" id="formulas-dropdown">
+    <div>=SUM(A1:A10)</div>
+    <div>=AVERAGE(A1:A10)</div>
+    <div>=MIN(A1:A10)</div>
+    <div>=MAX(A1:A10)</div>
+    <div>=COUNT(A1:A10)</div>
+    <div>=A1+A2</div>
+  </div>
+
+  <div class="dropdown" id="functions-dropdown">
+    <div>IF</div>
+    <div>CONCATENATE</div>
+    <div>LEFT</div>
+    <div>RIGHT</div>
+    <div>LEN</div>
+    <div>ROUND</div>
+  </div>
+
   <main>
     <div class="spreadsheet-container">
       <table class="spreadsheet" id="spreadsheet">
@@ -33,15 +53,15 @@
           <tr>
             <th class="corner"></th>
             <!-- Column headers A-T -->
-            <!-- Will be filled by JS -->
           </tr>
         </thead>
         <tbody>
-          <!-- Rows will be filled by JS -->
+          <!-- Rows -->
         </tbody>
       </table>
     </div>
   </main>
+
   <script src="/static/app.js"></script>
 </body>
-</html> 
+</html>

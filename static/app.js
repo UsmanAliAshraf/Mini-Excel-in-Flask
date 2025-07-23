@@ -228,21 +228,76 @@ cell.focus();
 }
 
 
-  async updateCell(cell, updates) {
-    const row = +cell.dataset.row;
-    const col = +cell.dataset.col;
-    const payload = { row, col, ...updates };
-    const res = await fetch('/api/cell', {
+async updateCell(cell, updates) {
+  const newValue = updates.value;
+
+  if (typeof newValue === 'string' && newValue.startsWith('=')) {
+    // check if it's direct math (like =A1+B1) or range-based
+    if (/^=[A-Z]+\d+\s*[\+\-\*/]\s*[A-Z]+\d+$/.test(newValue.trim())) {
+        this.handleDirectFormula(cell);
+    } else {
+        await this.handleFormula(cell, newValue);
+    }
+    return;
+}
+
+
+  const row = +cell.dataset.row;
+  const col = +cell.dataset.col;
+  const payload = { row, col, ...updates };
+
+  const res = await fetch('/api/cell', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    cell.textContent = data.value;
-    cell.style.fontSize = data.font_size + 'px';
-    cell.style.fontWeight = data.bold ? 'bold' : 'normal';
-    cell.style.fontStyle = data.italic ? 'italic' : 'normal';
+  });
+  const data = await res.json();
+
+  cell.textContent = data.value;
+  cell.style.fontSize = data.font_size + 'px';
+  cell.style.fontWeight = data.bold ? 'bold' : 'normal';
+  cell.style.fontStyle = data.italic ? 'italic' : 'normal';
+}
+
+handleDirectFormula(cell) {
+  const formula = cell.textContent.trim();
+  if (!formula.startsWith('=')) return;
+
+  const match = formula.match(/^=([A-Z]+[0-9]+)\s*([\+\-\*/])\s*([A-Z]+[0-9]+)$/);
+  if (!match) {
+    console.warn('Invalid formula format:', formula);
+    return;
   }
+
+  const [, ref1, operator, ref2] = match;
+  const cell1 = this.getCellByRef(ref1);
+  const cell2 = this.getCellByRef(ref2);
+
+  if (!cell1 || !cell2) {
+    console.warn('Invalid cell references:', ref1, ref2);
+    return;
+  }
+
+  const val1 = parseFloat(cell1.textContent) || 0;
+  const val2 = parseFloat(cell2.textContent) || 0;
+
+  let result = 0;
+  switch (operator) {
+    case '+': result = val1 + val2; break;
+    case '-': result = val1 - val2; break;
+    case '*': result = val1 * val2; break;
+    case '/': result = val2 !== 0 ? val1 / val2 : 'DIV/0'; break;
+  }
+
+  cell.textContent = result;
+}
+getCellByRef(ref) {
+  const colLetter = ref.match(/[A-Z]+/)[0];
+  const rowNumber = parseInt(ref.match(/[0-9]+/)[0], 10) - 1;
+
+  const colIndex = colLetter.charCodeAt(0) - 65; // A → 0
+  return this.tbody.querySelector(`td[data-row='${rowNumber}'][data-col='${colIndex}']`);
+}
 
   initEvents() {
     this.tbody.addEventListener('mousedown', (e) => {
@@ -439,6 +494,68 @@ cell.focus();
       }
     });
   }
+  async handleFormula(cell, formula) {
+    try {
+        const expression = formula.slice(1).toUpperCase(); // strip '='
+        let result = '';
+
+        if (expression.startsWith('SUM(')) {
+            result = this.computeRange(expression, 'SUM');
+        } else if (expression.startsWith('AVERAGE(')) {
+            result = this.computeRange(expression, 'AVERAGE');
+        } else if (expression.startsWith('MIN(')) {
+            result = this.computeRange(expression, 'MIN');
+        } else if (expression.startsWith('MAX(')) {
+            result = this.computeRange(expression, 'MAX');
+        } else if (expression.startsWith('COUNT(')) {
+            result = this.computeRange(expression, 'COUNT');
+        } else {
+            result = 'ERR';
+        }
+
+        cell.textContent = result;
+
+        // optionally persist formula & result:
+        await this.updateCell(cell, { value: result, formula });
+
+    } catch (err) {
+        console.error('Formula error:', err);
+        cell.textContent = 'ERR';
+    }
+}
+
+// helper for range-based formulas
+computeRange(expression, type) {
+    const rangeMatch = expression.match(/\(([A-Z]+)(\d+):([A-Z]+)(\d+)\)/);
+    if (!rangeMatch) return 'ERR';
+
+    const [_, colStart, rowStart, colEnd, rowEnd] = rangeMatch;
+    const startCol = colStart.charCodeAt(0) - 65;
+    const endCol = colEnd.charCodeAt(0) - 65;
+    const startRow = parseInt(rowStart) - 1;
+    const endRow = parseInt(rowEnd) - 1;
+
+    const values = [];
+
+    for (let r = startRow; r <= endRow; r++) {
+        for (let c = startCol; c <= endCol; c++) {
+            const td = this.tbody.querySelector(`td[data-row="${r}"][data-col="${c}"]`);
+            if (td && !isNaN(parseFloat(td.textContent))) {
+                values.push(parseFloat(td.textContent));
+            }
+        }
+    }
+
+    switch (type) {
+        case 'SUM': return values.reduce((a, b) => a + b, 0);
+        case 'AVERAGE': return values.length ? (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2) : 0;
+        case 'MIN': return values.length ? Math.min(...values) : 0;
+        case 'MAX': return values.length ? Math.max(...values) : 0;
+        case 'COUNT': return values.length;
+        default: return 'ERR';
+    }
+}
+
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -447,4 +564,27 @@ document.addEventListener('DOMContentLoaded', () => {
   ui.initClipboard();
   ui.initPaste();
 
-});
+  // Dropdown logic
+  document.getElementById('formulas-btn').addEventListener('click', (e) => {
+    const dropdown = document.getElementById('formulas-dropdown');
+    const btnRect = e.target.getBoundingClientRect();
+  
+    dropdown.style.top = `${btnRect.bottom + window.scrollY}px`;
+    dropdown.style.left = `${btnRect.left + window.scrollX}px`;
+    dropdown.classList.toggle('show');
+  
+    document.getElementById('functions-dropdown').classList.remove('show');
+  });
+  
+  document.getElementById('functions-btn').addEventListener('click', (e) => {
+    const dropdown = document.getElementById('functions-dropdown');
+    const btnRect = e.target.getBoundingClientRect();
+  
+    dropdown.style.top = `${btnRect.bottom + window.scrollY}px`;
+    dropdown.style.left = `${btnRect.left + window.scrollX}px`;
+    dropdown.classList.toggle('show');
+  
+    document.getElementById('formulas-dropdown').classList.remove('show');
+  });
+  });
+

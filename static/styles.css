@@ -314,3 +314,32 @@ th .col-resizer {
 }
 
 
+.dropdown {
+  display: none;
+  position: absolute;
+  background: var(--header-bg);
+  color: var(--text-light);
+  border: 1px solid var(--cell-border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  padding: 0.5rem 0;
+  border-radius: 4px;
+  z-index: 50;
+  min-width: 180px;
+  top: var(--ribbon-height);
+  left: 2rem;
+  margin-top: 2px;
+
+}
+.dropdown.show {
+  display: block;
+}
+.dropdown div {
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown div:hover {
+  background: var(--highlight);
+  color: var(--bg-dark);
+}
