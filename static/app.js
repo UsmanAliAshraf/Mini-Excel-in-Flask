@@ -510,18 +510,102 @@ getCellByRef(ref) {
         } else if (expression.startsWith('COUNT(')) {
             result = this.computeRange(expression, 'COUNT');
         } else {
-            result = 'ERR';
+            // new dropdown functions
+            result = this.computeFunction(expression);
         }
 
         cell.textContent = result;
 
-        // optionally persist formula & result:
         await this.updateCell(cell, { value: result, formula });
 
     } catch (err) {
         console.error('Formula error:', err);
         cell.textContent = 'ERR';
     }
+}
+
+computeFunction(expression) {
+  try {
+      if (expression.startsWith('IF(')) {
+          const args = this.parseArgs(expression.slice(3, -1));
+          const [condition, valTrue, valFalse] = args;
+          const condEval = this.evalCondition(condition);
+          return condEval ? valTrue : valFalse;
+      }
+
+      if (expression.startsWith('CONCATENATE(')) {
+          const args = this.parseArgs(expression.slice(12, -1));
+          return args.join('');
+      }
+
+      if (expression.startsWith('LEFT(')) {
+          const args = this.parseArgs(expression.slice(5, -1));
+          return args[0].substring(0, parseInt(args[1], 10));
+      }
+
+      if (expression.startsWith('RIGHT(')) {
+          const args = this.parseArgs(expression.slice(6, -1));
+          const text = args[0];
+          const num = parseInt(args[1], 10);
+          return text.substring(text.length - num);
+      }
+
+      if (expression.startsWith('LEN(')) {
+          const args = this.parseArgs(expression.slice(4, -1));
+          return args[0].length;
+      }
+
+      if (expression.startsWith('ROUND(')) {
+          const args = this.parseArgs(expression.slice(6, -1));
+          return Number(parseFloat(args[0]).toFixed(parseInt(args[1], 10)));
+      }
+
+      return 'ERR';
+  } catch {
+      return 'ERR';
+  }
+}
+parseArgs(argStr) {
+  return argStr.split(',').map(s => {
+      const val = s.trim();
+      if (/^[A-Z]+\d+$/.test(val)) {
+          const cell = this.getCellByRef(val);
+          return cell ? cell.textContent.trim() : '';
+      }
+      if (val.startsWith('"') && val.endsWith('"')) {
+          return val.slice(1, -1);
+      }
+      return val;
+  });
+}
+evalCondition(condStr) {
+  const match = condStr.match(/([A-Z]+\d+|\d+)\s*(<=|>=|=|>|<)\s*([A-Z]+\d+|\d+)/);
+  if (!match) return false;
+
+  let [_, left, op, right] = match;
+
+  if (/^[A-Z]+\d+$/.test(left)) {
+      const cell = this.getCellByRef(left);
+      left = cell ? parseFloat(cell.textContent) : 0;
+  } else {
+      left = parseFloat(left);
+  }
+
+  if (/^[A-Z]+\d+$/.test(right)) {
+      const cell = this.getCellByRef(right);
+      right = cell ? parseFloat(cell.textContent) : 0;
+  } else {
+      right = parseFloat(right);
+  }
+
+  switch (op) {
+      case '=': return left === right;
+      case '>': return left > right;
+      case '<': return left < right;
+      case '>=': return left >= right;
+      case '<=': return left <= right;
+      default: return false;
+  }
 }
 
 // helper for range-based formulas
