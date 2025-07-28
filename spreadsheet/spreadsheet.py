@@ -10,7 +10,8 @@ class Spreadsheet:
         self._ensure_size(row+1, col+1)
         return self.grid[row][col]
 
-    def set_cell(self, row, col, value=None, font_size=None, bold=None, italic=None):
+    def set_cell(self, row, col, value=None, font_size=None, bold=None, italic=None, bg_color=None, text_color=None):
+        # Used by import to set cell values in bulk and for highlight features
         self._ensure_size(row+1, col+1)
         cell = self.grid[row][col]
         if value is not None:
@@ -21,6 +22,10 @@ class Spreadsheet:
             cell.bold = bold
         if italic is not None:
             cell.italic = italic
+        if bg_color is not None:
+            cell.bg_color = bg_color
+        if text_color is not None:
+            cell.text_color = text_color
         return cell
 
     def add_rows(self, count):

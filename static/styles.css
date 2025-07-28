@@ -1,7 +1,7 @@
 .app-header {
   width: 100%;
   background: #232323;
-  color: #ff6600;
+  color: #00e676;
   font-size: 2rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -15,7 +15,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  border-bottom: 2px solid #ff6600;
+  border-bottom: 2px solid #006d3c;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 .app-header:before {
@@ -26,20 +26,20 @@
 }
 .app-header:focus, .app-header:hover {
   background: #282828;
-  color: #fff;
+  color: #b9f6ca;
   box-shadow: 0 4px 16px rgba(0,0,0,0.18);
 }
 
 
 :root {
   --bg-dark: #1e1e1e;
-  --highlight: #ff6600;
+  --highlight: #006d3c;
   --text-light: #fff;
   --header-bg: #232323;
   --cell-bg: #252525;
   --cell-border: #333;
   --cell-selected: #00e676;
-  --cell-highlight: #66ffb3;
+  --cell-highlight: #1de9b6;
   --ribbon-height: 56px;
   --font-main: 'Segoe UI', 'Arial', sans-serif;
 }
@@ -72,25 +72,38 @@ header.ribbon {
 }
 
 .ribbon-btn {
-  background: none;
+  background: linear-gradient(90deg, #003d25 0%, #006d3c 100%);
   border: none;
   color: var(--text-light);
   font-size: 1rem;
-  padding: 0.5rem 1.2rem;
-  border-radius: 4px;
+  padding: 0.5rem 1.4rem;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
+  box-shadow: 0 2px 8px rgba(0,255,128,0.08);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.1s;
+  outline: none;
+  border: 1.5px solid transparent;
 }
 
 .ribbon-btn.active,
 .ribbon-btn:focus {
   background: var(--highlight);
-  color: var(--bg-dark);
+  color: #b9f6ca;
+  border: 1.5px solid #00e676;
+  box-shadow: 0 4px 16px rgba(0,255,128,0.12);
+  transform: scale(1.04);
 }
 
 .ribbon-btn:hover {
   background: var(--cell-highlight);
-  color: var(--bg-dark);
+  color: #003d25;
+  border: 1.5px solid #00e676;
+  box-shadow: 0 4px 16px rgba(0,255,128,0.18);
+  transform: scale(1.06);
 }
 
 .ribbon-right {
@@ -109,27 +122,34 @@ header.ribbon {
   min-width: 2.2rem;
   font-size: 1.1rem;
   font-weight: 600;
-  background: none;
+  background: linear-gradient(90deg, #003d25 0%, #006d3c 100%);
   border: none;
   color: var(--text-light);
   border-radius: 4px;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.1s;
   padding: 0.4rem 0.7rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,255,128,0.08);
 }
 
 .font-btn:active, .style-btn:active,
 .font-btn.active, .style-btn.active {
   background: var(--highlight);
-  color: var(--bg-dark);
+  color: #b9f6ca;
+  border: 1.5px solid #00e676;
+  box-shadow: 0 4px 16px rgba(0,255,128,0.12);
+  transform: scale(1.04);
 }
 
 .font-btn:hover, .style-btn:hover {
   background: var(--cell-highlight);
-  color: var(--bg-dark);
+  color: #003d25;
+  border: 1.5px solid #00e676;
+  box-shadow: 0 4px 16px rgba(0,255,128,0.18);
+  transform: scale(1.06);
 }
 
 .search-bar {
@@ -307,7 +327,7 @@ th .col-resizer {
 
 .selection-box {
   position: absolute;
-  border: 2px solid green;
+  border: 2px solid #00e676;
   background: transparent;
   pointer-events: none;
   z-index: 10;
@@ -341,5 +361,51 @@ th .col-resizer {
 
 .dropdown div:hover {
   background: var(--highlight);
-  color: var(--bg-dark);
+  color: #b9f6ca;
+}
+
+#fill-color-btn, #text-color-btn {
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(90deg, #003d25 0%, #00bfa5 100%);
+  color: #fff;
+  border: 1.5px solid #00e676;
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,255,128,0.10);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+#fill-color-btn:hover, #text-color-btn:hover {
+  background: #1de9b6;
+  color: #003d25;
+  border: 1.5px solid #00e676;
+  box-shadow: 0 4px 16px rgba(0,255,128,0.18);
+  transform: scale(1.06);
+}
+#fill-color-input, #text-color-input {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #00e676;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,255,128,0.10);
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+  cursor: pointer;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+#fill-color-input:focus, #text-color-input:focus {
+  border: 2.5px solid #1de9b6;
+  box-shadow: 0 4px 16px rgba(0,255,128,0.18);
+}
+
+.search-match {
+  background: #fffde7 !important;
+  color: #232323 !important;
+  border: 2px solid #ffd600 !important;
+  box-shadow: 0 2px 8px rgba(255,214,0,0.10);
+  transition: background 0.2s, color 0.2s, border 0.2s;
+  z-index: 10;
 }

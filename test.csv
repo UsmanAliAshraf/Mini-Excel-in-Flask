@@ -1,0 +1,25 @@
+ID,Name,Department,Role,Salary,Joining Date,Location,Email,Phone,Manager,Status,Age,Experience,Grade,Bonus,Leaves,Project,Shift,Rating,Remarks
+1,Ali Khan,Engineering,Developer,80000,2021-06-15,Lahore,ali.khan@example.com,03001234567,Umer,Active,26,3,B,5000,2,Atlas,Day,4.5,Good performer
+2,Sara Ahmed,Marketing,Analyst,70000,2022-02-10,Karachi,sara.ahmed@example.com,03111234567,Hina,Active,28,4,A,3000,1,BrandX,Night,4.2,Creative thinker
+3,Faisal Iqbal,HR,HR Manager,95000,2019-11-05,Islamabad,faisal.iqbal@example.com,03221234567,CEO,Active,35,10,A+,8000,0,Recruitment,Day,4.8,Strong leader
+4,Zoya Malik,Finance,Accountant,65000,2023-01-20,Lahore,zoya.malik@example.com,03331234567,Tahir,Probation,24,1,B-,0,4,Audit,Night,3.9,Needs improvement
+5,Bilal Sheikh,Engineering,QA Tester,60000,2020-08-25,Lahore,bilal.sheikh@example.com,03441234567,Umer,Active,29,5,B+,2000,3,Atlas,Day,4.1,Consistent
+6,Mehwish Raza,Admin,Office Coordinator,50000,2021-03-18,Karachi,mehwish.raza@example.com,03551234567,Faisal,Active,27,2,B,1000,1,Facilities,Night,4.0,Reliable
+1,Ali Khan,Engineering,Developer,80000,2021-06-15,Lahore,ali.khan@example.com,03001234567,Umer,Active,26,3,B,5000,2,Atlas,Day,4.5,Good performer
+2,Sara Ahmed,Marketing,Analyst,70000,2022-02-10,Karachi,sara.ahmed@example.com,03111234567,Hina,Active,28,4,A,3000,1,BrandX,Night,4.2,Creative thinker
+3,Faisal Iqbal,HR,HR Manager,95000,2019-11-05,Islamabad,faisal.iqbal@example.com,03221234567,CEO,Active,35,10,A+,8000,0,Recruitment,Day,4.8,Strong leader
+4,Zoya Malik,Finance,Accountant,65000,2023-01-20,Lahore,zoya.malik@example.com,03331234567,Tahir,Probation,24,1,B-,0,4,Audit,Night,3.9,Needs improvement
+5,Bilal Sheikh,Engineering,QA Tester,60000,2020-08-25,Lahore,bilal.sheikh@example.com,03441234567,Umer,Active,29,5,B+,2000,3,Atlas,Day,4.1,Consistent
+6,Mehwish Raza,Admin,Office Coordinator,50000,2021-03-18,Karachi,mehwish.raza@example.com,03551234567,Faisal,Active,27,2,B,1000,1,Facilities,Night,4.0,Reliable
+1,Ali Khan,Engineering,Developer,80000,2021-06-15,Lahore,ali.khan@example.com,03001234567,Umer,Active,26,3,B,5000,2,Atlas,Day,4.5,Good performer
+2,Sara Ahmed,Marketing,Analyst,70000,2022-02-10,Karachi,sara.ahmed@example.com,03111234567,Hina,Active,28,4,A,3000,1,BrandX,Night,4.2,Creative thinker
+3,Faisal Iqbal,HR,HR Manager,95000,2019-11-05,Islamabad,faisal.iqbal@example.com,03221234567,CEO,Active,35,10,A+,8000,0,Recruitment,Day,4.8,Strong leader
+4,Zoya Malik,Finance,Accountant,65000,2023-01-20,Lahore,zoya.malik@example.com,03331234567,Tahir,Probation,24,1,B-,0,4,Audit,Night,3.9,Needs improvement
+5,Bilal Sheikh,Engineering,QA Tester,60000,2020-08-25,Lahore,bilal.sheikh@example.com,03441234567,Umer,Active,29,5,B+,2000,3,Atlas,Day,4.1,Consistent
+6,Mehwish Raza,Admin,Office Coordinator,50000,2021-03-18,Karachi,mehwish.raza@example.com,03551234567,Faisal,Active,27,2,B,1000,1,Facilities,Night,4.0,Reliable
+1,Ali Khan,Engineering,Developer,80000,2021-06-15,Lahore,ali.khan@example.com,03001234567,Umer,Active,26,3,B,5000,2,Atlas,Day,4.5,Good performer
+2,Sara Ahmed,Marketing,Analyst,70000,2022-02-10,Karachi,sara.ahmed@example.com,03111234567,Hina,Active,28,4,A,3000,1,BrandX,Night,4.2,Creative thinker
+3,Faisal Iqbal,HR,HR Manager,95000,2019-11-05,Islamabad,faisal.iqbal@example.com,03221234567,CEO,Active,35,10,A+,8000,0,Recruitment,Day,4.8,Strong leader
+4,Zoya Malik,Finance,Accountant,65000,2023-01-20,Lahore,zoya.malik@example.com,03331234567,Tahir,Probation,24,1,B-,0,4,Audit,Night,3.9,Needs improvement
+5,Bilal Sheikh,Engineering,QA Tester,60000,2020-08-25,Lahore,bilal.sheikh@example.com,03441234567,Umer,Active,29,5,B+,2000,3,Atlas,Day,4.1,Consistent
+6,Mehwish Raza,Admin,Office Coordinator,50000,2021-03-18,Karachi,mehwish.raza@example.com,03551234567,Faisal,Active,27,2,B,1000,1,Facilities,Night,4.0,Reliable

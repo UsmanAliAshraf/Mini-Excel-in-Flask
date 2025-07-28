@@ -55,7 +55,8 @@ class SpreadsheetUI {
     this.isDragging = false;
     this.startCell = null;
     this.selectionBox = null;
-
+    this.searchMatches = [];
+    this.currentMatchIdx = 0;
   }
 
   initHeaders() {
@@ -95,14 +96,21 @@ class SpreadsheetUI {
         td.style.fontSize = cellData.font_size + 'px';
         td.style.fontWeight = cellData.bold ? 'bold' : 'normal';
         td.style.fontStyle = cellData.italic ? 'italic' : 'normal';
-        
         td.classList.add('text-wrap');
-
-        
-    
+        // Apply cell background and text color if set
+        if (cellData.bg_color) {
+          td.style.backgroundColor = cellData.bg_color;
+        }
+        if (cellData.text_color) {
+          td.style.color = cellData.text_color;
+        }
         tr.appendChild(td);
       }
       this.tbody.appendChild(tr);
+    }
+    // After rendering, re-apply search highlights if needed
+    if (this.lastSearchTerm) {
+      this.highlightSearchMatches(this.lastSearchTerm);
     }
   }
 
@@ -440,14 +448,97 @@ getCellByRef(ref) {
         await this.updateCell(cell, { italic: !isItalic });
       }
     });
+    // Fill color logic
+    const fillColorBtn = document.getElementById('fill-color-btn');
+    const fillColorInput = document.getElementById('fill-color-input');
+    fillColorBtn.addEventListener('click', () => fillColorInput.click());
+    fillColorInput.addEventListener('input', async (e) => {
+      const color = e.target.value;
+      for (const cell of this.selectedCells) {
+        cell.style.backgroundColor = color;
+        await this.updateCell(cell, { bg_color: color });
+      }
+    });
+    // Text color logic
+    const textColorBtn = document.getElementById('text-color-btn');
+    const textColorInput = document.getElementById('text-color-input');
+    textColorBtn.addEventListener('click', () => textColorInput.click());
+    textColorInput.addEventListener('input', async (e) => {
+      const color = e.target.value;
+      for (const cell of this.selectedCells) {
+        cell.style.color = color;
+        await this.updateCell(cell, { text_color: color });
+      }
+    });
     // Accessibility: keyboard navigation for ribbon
     const searchBar = document.querySelector('.search-bar');
+    // Accessibility: keyboard navigation for ribbon
     searchBar.addEventListener('keydown', (e) => {
       if (e.key === 'Tab' && !e.shiftKey) {
         e.preventDefault();
         // Focus first cell
         const firstCell = this.tbody.querySelector('td[data-row="0"][data-col="0"]');
         if (firstCell) firstCell.focus();
+      }
+      // Search logic
+      if (e.key === 'Enter') {
+        const term = searchBar.value.trim();
+        this.lastSearchTerm = term;
+        this.highlightSearchMatches(term);
+      } else if (e.key === 'Escape') {
+        searchBar.value = '';
+        this.lastSearchTerm = '';
+        this.highlightSearchMatches('');
+      }
+    });
+    searchBar.addEventListener('input', (e) => {
+      if (!searchBar.value.trim()) {
+        this.lastSearchTerm = '';
+        this.highlightSearchMatches('');
+      }
+    });
+    // Import CSV logic
+    const importBtn = document.getElementById('import-btn');
+    const importFile = document.getElementById('import-file');
+    importBtn.addEventListener('click', () => importFile.click());
+    importFile.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/import', {
+        method: 'POST',
+        body: formData
+      });
+      if (res.ok) {
+        // Reset scroll and visible rows to show imported data
+        this.startRow = 0;
+        this.visibleRows = 40;
+        await this.fetchAndRenderGrid();
+      } else {
+        alert('Import failed.');
+      }
+      importFile.value = '';
+    });
+    // Export CSV logic
+    const exportBtn = document.getElementById('export-btn');
+    exportBtn.addEventListener('click', async () => {
+      const now = new Date();
+      const pad = n => n.toString().padStart(2, '0');
+      const filename = `SP_${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+      const res = await fetch('/api/export');
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename + '.csv';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } else {
+        alert('Export failed.');
       }
     });
   }
@@ -639,6 +730,27 @@ computeRange(expression, type) {
         default: return 'ERR';
     }
 }
+
+  highlightSearchMatches(term) {
+    // Remove previous highlights
+    this.tbody.querySelectorAll('td.search-match').forEach(td => td.classList.remove('search-match'));
+    this.searchMatches = [];
+    this.currentMatchIdx = 0;
+    if (!term) return;
+    const lowerTerm = term.toLowerCase();
+    const tds = this.tbody.querySelectorAll('td');
+    for (const td of tds) {
+      if (td.textContent.toLowerCase().includes(lowerTerm)) {
+        td.classList.add('search-match');
+        this.searchMatches.push(td);
+      }
+    }
+    // Scroll to first match
+    if (this.searchMatches.length > 0) {
+      this.searchMatches[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      this.searchMatches[0].focus();
+    }
+  }
 
 }
 
