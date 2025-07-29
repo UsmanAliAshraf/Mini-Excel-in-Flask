@@ -752,6 +752,94 @@ computeRange(expression, type) {
     }
   }
 
+  // Apply formula to selected cells
+  async applyFormulaToSelectedCells(formula) {
+    if (this.selectedCells.length === 0) {
+      alert('Please select at least one cell first.');
+      return;
+    }
+
+    for (const cell of this.selectedCells) {
+      // Get the cell's position to create a range reference
+      const row = +cell.dataset.row;
+      const col = +cell.dataset.col;
+      const colLetter = String.fromCharCode(65 + col);
+      const cellRef = `${colLetter}${row + 1}`;
+
+      // Create a range based on the selected cells
+      const minRow = Math.min(...this.selectedCells.map(c => +c.dataset.row));
+      const maxRow = Math.max(...this.selectedCells.map(c => +c.dataset.row));
+      const minCol = Math.min(...this.selectedCells.map(c => +c.dataset.col));
+      const maxCol = Math.max(...this.selectedCells.map(c => +c.dataset.col));
+
+      const startColLetter = String.fromCharCode(65 + minCol);
+      const endColLetter = String.fromCharCode(65 + maxCol);
+      const range = `${startColLetter}${minRow + 1}:${endColLetter}${maxRow + 1}`;
+
+      // Apply the formula with the range
+      let appliedFormula = formula;
+      if (formula.includes('A1:A10')) {
+        appliedFormula = formula.replace('A1:A10', range);
+      }
+
+      cell.textContent = appliedFormula;
+      await this.updateCell(cell, { value: appliedFormula });
+    }
+  }
+
+  // Apply function to selected cells
+  async applyFunctionToSelectedCells(functionName) {
+    if (this.selectedCells.length === 0) {
+      alert('Please select at least one cell first.');
+      return;
+    }
+
+    for (const cell of this.selectedCells) {
+      const row = +cell.dataset.row;
+      const col = +cell.dataset.col;
+      const colLetter = String.fromCharCode(65 + col);
+      const cellRef = `${colLetter}${row + 1}`;
+
+      // Create a range based on the selected cells
+      const minRow = Math.min(...this.selectedCells.map(c => +c.dataset.row));
+      const maxRow = Math.max(...this.selectedCells.map(c => +c.dataset.row));
+      const minCol = Math.min(...this.selectedCells.map(c => +c.dataset.col));
+      const maxCol = Math.max(...this.selectedCells.map(c => +c.dataset.col));
+
+      const startColLetter = String.fromCharCode(65 + minCol);
+      const endColLetter = String.fromCharCode(65 + maxCol);
+      const range = `${startColLetter}${minRow + 1}:${endColLetter}${maxRow + 1}`;
+
+      // Apply the function with appropriate parameters
+      let appliedFunction = '';
+      switch (functionName) {
+        case 'IF':
+          appliedFunction = `=IF(${cellRef}>0,"Positive","Negative")`;
+          break;
+        case 'CONCATENATE':
+          appliedFunction = `=CONCATENATE(${cellRef},"_text")`;
+          break;
+        case 'LEFT':
+          appliedFunction = `=LEFT(${cellRef},3)`;
+          break;
+        case 'RIGHT':
+          appliedFunction = `=RIGHT(${cellRef},3)`;
+          break;
+        case 'LEN':
+          appliedFunction = `=LEN(${cellRef})`;
+          break;
+        case 'ROUND':
+          appliedFunction = `=ROUND(${cellRef},2)`;
+          break;
+        default:
+          appliedFunction = `=${functionName}(${range})`;
+      }
+
+      cell.textContent = appliedFunction;
+      await this.updateCell(cell, { value: appliedFunction });
+    }
+  }
+
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -781,6 +869,32 @@ document.addEventListener('DOMContentLoaded', () => {
     dropdown.classList.toggle('show');
   
     document.getElementById('formulas-dropdown').classList.remove('show');
+  });
+
+  // Formula dropdown item click handlers
+  document.getElementById('formulas-dropdown').addEventListener('click', (e) => {
+    if (e.target.tagName === 'DIV') {
+      const formula = e.target.textContent;
+      ui.applyFormulaToSelectedCells(formula);
+      document.getElementById('formulas-dropdown').classList.remove('show');
+    }
+  });
+
+  // Function dropdown item click handlers
+  document.getElementById('functions-dropdown').addEventListener('click', (e) => {
+    if (e.target.tagName === 'DIV') {
+      const functionName = e.target.textContent;
+      ui.applyFunctionToSelectedCells(functionName);
+      document.getElementById('functions-dropdown').classList.remove('show');
+    }
+  });
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.ribbon-btn') && !e.target.closest('.dropdown')) {
+      document.getElementById('formulas-dropdown').classList.remove('show');
+      document.getElementById('functions-dropdown').classList.remove('show');
+    }
   });
   });
 
